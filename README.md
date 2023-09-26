@@ -1,6 +1,6 @@
-<p align="center">
-<img src="./dark-runes.svg" height="150" style="background-color: white; border:5px solid black; border-radius: 50%;">
-</p>
+<div align="center">
+    <img src="https://res.cloudinary.com/flakolefluk/image/upload/v1695761393/raeuhoqppyjoxv6ztw24.webp" height="150">
+</div>
 
 <h1 align="center">
 Dark Runes
@@ -32,7 +32,7 @@ With this newfound wisdom, Svelte worked tirelessly to bridge the gap between th
 And so, the mystical land of JavaScript found equilibrium once more. The Lumina and Dark Runes, now respected as powerful tools rather than instruments of discord, were used to nurture and protect the realm. Svelte's journey had not only restored balance but had also proven that even in the darkest of times, the light of wisdom could prevail, illuminating the path to a brighter future for all.
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/vitest"><img src="https://img.shields.io/npm/v/vitest?color=729B1B&label="></a>
+  <a href="https://www.npmjs.com/package/dark-runes"><img src="https://img.shields.io/npm/v/dark-runes?color=729B1B&label=dark-runes"></a>
 <p>
 
 ## Installation
