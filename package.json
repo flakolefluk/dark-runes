@@ -1,0 +1,28 @@
+{
+  "name": "dark-runes",
+  "description": "Community runes for Svelte",
+  "private": false,
+  "version": "0.0.1",
+  "type": "module",
+  "main": "src/index.js",
+  "types": "src/global.d.ts",
+  "files":["src"],
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.26.2",
+    "@types/estree": "^1.0.2",
+    "dedent": "^1.5.1",
+    "prettier": "^3.0.3",
+    "svelte": "^4.2.1",
+    "vite": "^4.4.5",
+    "vitest": "^0.34.5"
+  },
+  "dependencies": {
+    "magic-string": "^0.30.3"
+  },
+  "peerDependencies": {
+		"svelte":"^4.0.0"
+	}
+}
