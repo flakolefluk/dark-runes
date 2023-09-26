@@ -99,7 +99,7 @@ export function processDarkRunes(options) {
                     }
                 })
             }
-           
+
             if (process.env.DEBUG_DARK_RUNES) {
                 console.log("DARK RUNES OUTPUT START for:", filename)
                 console.log(magic.toString())

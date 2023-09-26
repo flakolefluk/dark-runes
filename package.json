@@ -2,11 +2,17 @@
   "name": "dark-runes",
   "description": "Community runes for Svelte",
   "private": false,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "main": "src/index.js",
   "types": "src/global.d.ts",
-  "files":["src"],
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flakolefluk/dark-runes.git"
+  },
   "scripts": {
     "test": "vitest"
   },
@@ -23,6 +29,6 @@
     "magic-string": "^0.30.3"
   },
   "peerDependencies": {
-		"svelte":"^4.0.0"
-	}
+    "svelte": "^4.0.0"
+  }
 }
