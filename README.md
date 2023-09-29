@@ -41,7 +41,7 @@ And so, the mystical land of JavaScript found equilibrium once more. The Lumina 
 pnpm i -D dark-runes 
 
 ## npm
-npm i -D dark runes
+npm i -D dark-runes
 ```
 
 ## Usage
