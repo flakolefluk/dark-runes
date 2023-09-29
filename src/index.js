@@ -29,6 +29,24 @@ function isCallExpressionWithIdentifier(node, calleeIdentifierName) {
 }
 
 /**
+ * 
+ * @param {import('svelte/types/compiler/interfaces').BaseNode[]} nodesArray 
+ * @returns {[number|undefined, number|undefined]}
+ */
+function getNodesArrayBoundaries(nodesArray) {
+    let start, end
+    for (let node of nodesArray) {
+        if (start === undefined || node.start < start) {
+            start = node.start
+        }
+        if (end === undefined || node.end > end) {
+            end = node.end
+        }
+    }
+    return [start, end]
+}
+
+/**
  * @typedef {Object} WithMarkupPreprocessor
  * @property {string} name
  * @property {import('svelte/compiler').MarkupPreprocessor} markup
@@ -90,10 +108,10 @@ export function processDarkRunes(options) {
                         }
 
                         if (isCallExpressionWithIdentifier(node, "$log")) {
-                            if (node.arguments.length === 1 && node.arguments[0].type !== 'SpreadElement') {
-                                let nodeToReplace = node;
-                                let nodeToKeep = node.arguments[0]
-                                magic = magic.overwrite(nodeToReplace.start, nodeToReplace.end, `$: console.log(${magic.slice(nodeToKeep.start, nodeToKeep.end)});`)
+                            let nodeToReplace = node;
+                            let [start, end] = getNodesArrayBoundaries(node.arguments)
+                            if (start !== undefined && end !== undefined) {
+                                magic.overwrite(nodeToReplace.start, nodeToReplace.end, `$: console.log(${magic.slice(start, end)})`)
                             }
                         }
                     }
