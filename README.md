@@ -152,4 +152,4 @@ $memo(() => {
 ```
 
 ## License
-[MIT](./LICENSE) License © 2021-Present [Ignacio Falk](https://github.com/flakolefluk)
+[MIT](./LICENSE) License © 2023-Present [Ignacio Falk](https://github.com/flakolefluk)
