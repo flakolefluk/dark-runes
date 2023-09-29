@@ -2,6 +2,7 @@
   "name": "dark-runes",
   "description": "Community runes for Svelte",
   "private": false,
+  "license":"MIT",
   "version": "0.0.2",
   "type": "module",
   "main": "src/index.js",
