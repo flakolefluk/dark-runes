@@ -1,5 +1,5 @@
 import MagicString from 'magic-string';
-import { parse, walk as _walk } from 'svelte/compiler';
+import { walk as _walk, parse } from 'svelte/compiler';
 
 export class DarkRuneError extends Error {
     constructor(message = "") {
@@ -16,6 +16,15 @@ export class DarkRuneError extends Error {
  */
 function walk(ast, opts) {
     return _walk(ast, opts)
+}
+
+/**
+ * 
+ * @param {import('svelte/types/compiler/interfaces').BaseNode} node 
+ * @returns {boolean}
+ */
+function isSpreadElement(node) {
+    return !!node && node.type === "SpreadElement"
 }
 
 /**
@@ -113,6 +122,88 @@ export function processDarkRunes(options) {
                             if (start !== undefined && end !== undefined) {
                                 magic.overwrite(nodeToReplace.start, nodeToReplace.end, `$: console.log(${magic.slice(start, end)})`)
                             }
+                        }
+
+                        if (isCallExpressionWithIdentifier(node, "$gsp")) {
+                            // console.log(JSON.stringify(node, null, 2))
+                            let [start, end] = getNodesArrayBoundaries(node.arguments)
+                            let [gettersNode, settersNode, propsNode] = node.arguments;
+                            let props = []
+                            if (gettersNode && gettersNode.type === "ObjectExpression") {
+                                gettersNode.properties.forEach(prop => {
+                                    if (prop.key.type === "Identifier" && prop.value.type === "Identifier" && prop.key.name === prop.value.name) {
+                                        props.push(`get ${prop.key.name}() { return ${prop.key.name}; }`)
+                                    }
+                                })
+
+                            }
+                            if (settersNode && settersNode.type === "ObjectExpression") {
+                                settersNode.properties.forEach(prop => {
+                                    if (prop.key.type === "Identifier" && prop.value.type === "Identifier" && prop.key.name === prop.value.name) {
+                                        props.push(`set ${prop.key.name}(value) { ${prop.key.name} = value; }`)
+                                    }
+                                })
+
+                            }
+                            if (propsNode && propsNode.type === "ObjectExpression") {
+                                propsNode.properties.forEach(prop => {
+                                        props.push(magic.slice(prop.start, prop.end))
+                                })
+                            }
+                            let nodeToReplace = node;
+                            magic.overwrite(nodeToReplace.start, nodeToReplace.end, (["{", props.join(",\n"), "}"]).join("\n"))
+                        }
+
+                        if (isSpreadElement(node) && isCallExpressionWithIdentifier(node.argument, "$get")) {
+                            let nodeToReplace = node;
+                            let callExpression = node.argument;
+                            let [gettersNode] = callExpression.arguments;
+                            let props = []
+                            if (gettersNode && gettersNode.type === "ObjectExpression") {
+                                gettersNode.properties.forEach(prop => {
+                                    if (prop.key.type === "Identifier" && prop.value.type === "Identifier" && prop.key.name === prop.value.name) {
+                                        props.push(`get ${prop.key.name}() { return ${prop.key.name}; }`)
+                                    }
+                                })
+
+                            }
+                            let replacementString = props.join(",\n")
+                            magic.overwrite(nodeToReplace.start, nodeToReplace.end, replacementString)
+                        }
+                        if (isSpreadElement(node) && isCallExpressionWithIdentifier(node.argument, "$set")) {
+                            let nodeToReplace = node;
+                            let callExpression = node.argument;
+                            let [gettersNode] = callExpression.arguments;
+                            let props = []
+                            if (gettersNode && gettersNode.type === "ObjectExpression") {
+                                gettersNode.properties.forEach(prop => {
+                                    if (prop.key.type === "Identifier" && prop.value.type === "Identifier" && prop.key.name === prop.value.name) {
+                                        props.push(`set ${prop.key.name}(value) { ${prop.key.name} = value; }`)
+                                    }
+                                })
+
+                            }
+                            let replacementString = props.join(",\n")
+                            magic.overwrite(nodeToReplace.start, nodeToReplace.end, replacementString)
+                        }
+
+                        if (isSpreadElement(node) && isCallExpressionWithIdentifier(node.argument, "$getset")) {
+                            let nodeToReplace = node;
+                            let callExpression = node.argument;
+                            let [gettersNode] = callExpression.arguments;
+                            let props = []
+                            if (gettersNode && gettersNode.type === "ObjectExpression") {
+                                gettersNode.properties.forEach(prop => {
+                                    if (prop.key.type === "Identifier" && prop.value.type === "Identifier" && prop.key.name === prop.value.name) {
+                                        props.push(`get ${prop.key.name}() { return ${prop.key.name}; }`)
+                                        props.push(`set ${prop.key.name}(value) { ${prop.key.name} = value; }`)
+                                    }
+                                })
+
+                            }
+                            let replacementString = props.join(",\n")
+
+                            magic.overwrite(nodeToReplace.start, nodeToReplace.end, replacementString)
                         }
                     }
                 })
