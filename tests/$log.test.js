@@ -1,26 +1,26 @@
-import { describe, test } from "vitest";
-import { compareOutput } from "./helpers";
+import { describe, test } from 'vitest';
+import { compareOutput } from './helpers';
 
-describe("$log rune", () => {
-    test("single argument", async () => {
-        let input = `
+describe('$log rune', () => {
+	test('single argument', async () => {
+		let input = `
         <script>
             let a = 1;
             $log(a);
         </script>
-`
+`;
 
-        let output = `
+		let output = `
     <script>
         let a = 1;
         $: console.log(a);
     </script>
-`
-        await compareOutput(input, output);
-    })
+`;
+		await compareOutput(input, output);
+	});
 
-    test("multiple arguments", async () => {
-        let input = `
+	test('multiple arguments', async () => {
+		let input = `
         <script>
             let a = 1;
             let b = 2;
@@ -28,9 +28,9 @@ describe("$log rune", () => {
             let d = 4;
             $log(a,b,c,d);
         </script>
-`
+`;
 
-        let output = `
+		let output = `
     <script>
         let a = 1;
         let b = 2;
@@ -38,12 +38,12 @@ describe("$log rune", () => {
         let d = 4;
         $: console.log(a,b,c,d);
     </script>
-`
-        await compareOutput(input, output);
-    })
+`;
+		await compareOutput(input, output);
+	});
 
-    test("multiple arguments with spread operator", async () => {
-        let input = `
+	test('multiple arguments with spread operator', async () => {
+		let input = `
         <script>
             let a = 1;
             let b = 2;
@@ -51,9 +51,9 @@ describe("$log rune", () => {
             let d = [a,b,c];
             $log(a,b,c,...d);
         </script>
-`
+`;
 
-        let output = `
+		let output = `
     <script>
         let a = 1;
         let b = 2;
@@ -61,28 +61,28 @@ describe("$log rune", () => {
         let d = [a,b,c];
         $: console.log(a,b,c,...d);
     </script>
-`
-        await compareOutput(input, output);
-    })
+`;
+		await compareOutput(input, output);
+	});
 
-    test("sequential $log", async () => {
-        let input = `
+	test('sequential $log', async () => {
+		let input = `
         <script>
             let a = 1;
             let b = 2;
             $log(a);
             $log(b);
         </script>
-`
+`;
 
-        let output = `
+		let output = `
     <script>
         let a = 1;
         let b = 2;
         $: console.log(a);
         $: console.log(b);
     </script>
-`
-        await compareOutput(input, output);
-    })
-})
+`;
+		await compareOutput(input, output);
+	});
+});
