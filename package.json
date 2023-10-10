@@ -15,7 +15,8 @@
     "url": "https://github.com/flakolefluk/dark-runes.git"
   },
   "scripts": {
-    "test": "vitest"
+    "test": "vitest",
+    "prettier": "prettier"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",

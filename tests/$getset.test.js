@@ -1,18 +1,18 @@
-import { describe, test } from "vitest";
-import { compareOutput } from "./helpers";
+import { describe, test } from 'vitest';
+import { compareOutput } from './helpers';
 
-describe("$getset rune", () => {
-    test("single", async () => {
-        let input = `
+describe('$getset rune', () => {
+	test('single', async () => {
+		let input = `
         <script>
             let a = 1;
             let res = {
                 ...$getset({a})
             }
         </script>
-`
+`;
 
-        let output = `
+		let output = `
     <script>
         let a = 1;
         let res = {
@@ -20,11 +20,11 @@ describe("$getset rune", () => {
 set a(value) { a = value; }
         }
     </script>
-`
-        await compareOutput(input, output);
-    })
-    test("multiple", async () => {
-        let input = `
+`;
+		await compareOutput(input, output);
+	});
+	test('multiple', async () => {
+		let input = `
         <script>
             let a = 1;
             let b = 1;
@@ -33,9 +33,9 @@ set a(value) { a = value; }
                 ...$getset({a,b,c})
             }
         </script>
-`
+`;
 
-        let output = `
+		let output = `
     <script>
         let a = 1;
         let b = 1;
@@ -49,7 +49,7 @@ get c() { return c; },
 set c(value) { c = value; }
         }
     </script>
-`
-        await compareOutput(input, output);
-    })
-})
+`;
+		await compareOutput(input, output);
+	});
+});
