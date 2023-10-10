@@ -53,14 +53,13 @@ import { processDarkRunes } from 'dark-runes'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	preprocess:
-		[
-			vitePreprocess(),
-			processDarkRunes({}),
-		],
-	kit: {
-		adapter: adapter()
-	}
+    preprocess: [
+        vitePreprocess(),
+        processDarkRunes({}),
+    ],
+    kit: {
+        adapter: adapter()
+    }
 };
 
 export default config;
@@ -73,12 +72,12 @@ export default config;
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 declare global {
-	namespace App {
-		// interface Error {}
-		// interface Locals {}
-		// interface PageData {}
-		// interface Platform {}
-	}
+    namespace App {
+        // interface Error {}
+        // interface Locals {}
+        // interface PageData {}
+        // interface Platform {}
+    }
 }
 
 export {};
@@ -142,8 +141,80 @@ $effect(() => {
 });
 ```
 
+### $get
+Source:
+```ts
+let myObj = {
+    ...$get({foo, bar})
+}
+```
 
-### $memo (Coming soon)
+Output:
+```ts
+let myObj = {
+    get foo() { return foo;}
+    get bar() { return bar;}
+}
+```
+
+### $set
+Source:
+```ts
+let myObj = {
+    ...$set({foo, bar})
+}
+```
+
+Output:
+```ts
+let myObj = {
+    set foo(val) { foo = val }
+    set bar(val) { bar = val}
+}
+```
+
+### $getset
+Source:
+```ts
+let myObj = {
+    ...$getset({foo, bar})
+}
+```
+
+Output:
+```ts
+let myObj = {
+    get foo() { return foo;}
+    set foo(val) { foo = val }
+    get bar() { return bar;}
+    set bar(val) { bar = val}
+}
+```
+
+|> $get, $set, $getset can be composed in combined in object including regular properties.
+
+### $gsp (getters, setters, properties)
+Source:
+```ts
+let myObj = $gsp(
+    { foo, bar },
+    { foo, fizz },
+    { fuzz: true }
+)
+```
+
+Output:
+```ts
+let myObj = {
+    get foo() { return foo;}
+    get bar() { return bar;}
+    set foo(val) { foo = val }
+    set fizz(val) { fizz = val}
+    fuzz: true
+}
+```
+
+### $memo (Coming soon).
 Source:
 ```ts
 $memo(() => {
