@@ -3,7 +3,7 @@
   "description": "Community runes for Svelte",
   "private": false,
   "license":"MIT",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "main": "src/index.js",
   "types": "src/global.d.ts",
