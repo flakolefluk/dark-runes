@@ -74,7 +74,7 @@ export function darkRunes() {
  * @property {string} options.alias
  * @returns {WithMarkupPreprocessor}
  */
-export function processDarkRunes(options) {
+export function processDarkRunes(options = {}) {
 	return {
 		name: 'dark-runes',
 		markup: ({ filename, content }) => {

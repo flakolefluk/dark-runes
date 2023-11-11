@@ -12,7 +12,7 @@ declare global {
 	function $getset<T>(getsetObj: T): T;
 }
 
-export declare function processDarkRunes(opts: any): void
+export declare function processDarkRunes(opts?: any): void
 // TODO: fix type
 export declare function darkRunes(): any
 
