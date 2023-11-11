@@ -1,4 +1,4 @@
-import { Plugin } from 'vite'
+import { PluginOption } from 'vite';
 declare global {
 	function $state<T>(value: T): T;
 	function $states<T extends any[]>(...values: T): T
@@ -15,6 +15,7 @@ declare global {
 }
 
 export declare function processDarkRunes(opts: any): void
-export declare function darkRunes(): Plugin
+// TODO: fix type
+export declare function darkRunes(): any
 
 export { };
