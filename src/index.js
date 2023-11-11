@@ -1,12 +1,66 @@
+import * as acorn from 'acorn';
+import { walk } from 'estree-walker';
 import MagicString from 'magic-string';
 import { parse } from 'svelte/compiler';
-import { DarkRuneError } from './DarkRuneError.js';
+import { gspHandler } from './handlers/gspHandler.js';
+import { logHandler } from './handlers/logHandler.js';
+import { spreadElementHandler } from './handlers/spreadElement.js';
+import { variableDeclarationHandler } from './handlers/variableDeclaration.js';
 import {
-	getNodesArrayBoundaries,
 	isCallExpressionWithIdentifier,
 	isSpreadElement,
-	walk,
+	isVariableDeclaration
 } from './utils.js';
+
+/**
+ * 
+ * @param {import('estree').Node} program 
+ * @param {MagicString} magic 
+ * @param {*} options
+ */
+function walkProgram(program, magic, options) {
+	walk(program, {
+		enter(node) {
+			if (isVariableDeclaration(node)) {
+				variableDeclarationHandler(node, magic, options)
+			}
+
+			if (isCallExpressionWithIdentifier(node, '$log')) {
+				logHandler(node, magic, options)
+			}
+
+			if (isCallExpressionWithIdentifier(node, '$gsp')) {
+				gspHandler(node, magic, options)
+			}
+
+			if (isSpreadElement(node)) {
+				spreadElementHandler(node, magic, options)
+			}
+		},
+	});
+}
+
+export function darkRunes() {
+	return {
+		name: "vite-plugin-dark-runes",
+		transform(src, id) {
+			if (id.endsWith('.svelte.ts') || id.endsWith('.svelte.js')) {
+				let magic = new MagicString(src, { filename: id })
+				/**
+				   * TODO: fix type
+				   * @type {*}
+				 */
+				const ast = acorn.parse(src, {
+					sourceType: 'module',
+					ecmaVersion: 13,
+					locations: true
+				});
+				walkProgram(ast, magic, { runes: true })
+				return { code: magic.toString(), map: magic.generateMap() };
+			}
+		}
+	}
+}
 
 /**
  * @typedef {Object} WithMarkupPreprocessor
@@ -25,219 +79,14 @@ export function processDarkRunes(options) {
 		name: 'dark-runes',
 		markup: ({ filename, content }) => {
 			let magic = new MagicString(content, { filename });
-			const ast = parse(content, { css: false, filename });
+			/**
+			 * TODO: fix type
+			 * @type {*}
+			 */
+			const ast = parse(content, { filename, modern: false });
 			let instance = ast.instance;
 			if (instance) {
-				walk(instance.content, {
-					/**
-					 *
-					 * @param {import('svelte/types/compiler/interfaces').BaseNode} node
-					 */
-					enter(node) {
-						if (node.type === 'VariableDeclaration') {
-							node.declarations.forEach((declaration) => {
-								if (
-									isCallExpressionWithIdentifier(declaration.init, '$state')
-								) {
-									if (
-										declaration.init.arguments.length === 1 &&
-										declaration.init.arguments[0].type !== 'SpreadElement'
-									) {
-										let nodeToReplace = declaration.init;
-										let nodeToKeep = declaration.init.arguments[0];
-										magic.overwrite(
-											nodeToReplace.start,
-											nodeToReplace.end,
-											magic.slice(nodeToKeep.start, nodeToKeep.end),
-										);
-									}
-								}
-
-								if (
-									isCallExpressionWithIdentifier(declaration.init, '$states')
-								) {
-									if (declaration.id.type !== 'ArrayPattern') {
-										throw new DarkRuneError(
-											'Unhandled id type when using $states rune',
-										);
-									}
-
-									let elements = declaration.id.elements;
-									let nodeToReplace = node;
-									if (elements.length !== declaration.init.arguments.length) {
-										throw new DarkRuneError(
-											'Asymmetric number of declarations',
-										);
-									}
-									if (elements.every((node) => node?.type === 'Identifier')) {
-										let output = declaration.init.arguments
-											.map((nodeToKeep, i) => {
-												let element = elements[i];
-												if (element && element.type === 'Identifier') {
-													return `let ${element.name} = ${magic.slice(
-														nodeToKeep.start,
-														nodeToKeep.end,
-													)};`;
-												}
-											})
-											.join('\n');
-										magic.overwrite(
-											nodeToReplace.start,
-											nodeToReplace.end,
-											output,
-										);
-									}
-								}
-							});
-						}
-
-						if (isCallExpressionWithIdentifier(node, '$log')) {
-							let nodeToReplace = node;
-							let [start, end] = getNodesArrayBoundaries(node.arguments);
-							if (start !== undefined && end !== undefined) {
-								magic.overwrite(
-									nodeToReplace.start,
-									nodeToReplace.end,
-									`$: console.log(${magic.slice(start, end)})`,
-								);
-							}
-						}
-
-						if (isCallExpressionWithIdentifier(node, '$gsp')) {
-							// console.log(JSON.stringify(node, null, 2))
-							let [start, end] = getNodesArrayBoundaries(node.arguments);
-							let [gettersNode, settersNode, propsNode] = node.arguments;
-							let props = [];
-							if (gettersNode && gettersNode.type === 'ObjectExpression') {
-								gettersNode.properties.forEach((prop) => {
-									if (
-										prop.key.type === 'Identifier' &&
-										prop.value.type === 'Identifier' &&
-										prop.key.name === prop.value.name
-									) {
-										props.push(
-											`get ${prop.key.name}() { return ${prop.key.name}; }`,
-										);
-									}
-								});
-							}
-							if (settersNode && settersNode.type === 'ObjectExpression') {
-								settersNode.properties.forEach((prop) => {
-									if (
-										prop.key.type === 'Identifier' &&
-										prop.value.type === 'Identifier' &&
-										prop.key.name === prop.value.name
-									) {
-										props.push(
-											`set ${prop.key.name}(value) { ${prop.key.name} = value; }`,
-										);
-									}
-								});
-							}
-							if (propsNode && propsNode.type === 'ObjectExpression') {
-								propsNode.properties.forEach((prop) => {
-									props.push(magic.slice(prop.start, prop.end));
-								});
-							}
-							let nodeToReplace = node;
-							magic.overwrite(
-								nodeToReplace.start,
-								nodeToReplace.end,
-								['{', props.join(',\n'), '}'].join('\n'),
-							);
-						}
-
-						if (
-							isSpreadElement(node) &&
-							isCallExpressionWithIdentifier(node.argument, '$get')
-						) {
-							let nodeToReplace = node;
-							let callExpression = node.argument;
-							let [gettersNode] = callExpression.arguments;
-							let props = [];
-							if (gettersNode && gettersNode.type === 'ObjectExpression') {
-								gettersNode.properties.forEach((prop) => {
-									if (
-										prop.key.type === 'Identifier' &&
-										prop.value.type === 'Identifier' &&
-										prop.key.name === prop.value.name
-									) {
-										props.push(
-											`get ${prop.key.name}() { return ${prop.key.name}; }`,
-										);
-									}
-								});
-							}
-							let replacementString = props.join(',\n');
-							magic.overwrite(
-								nodeToReplace.start,
-								nodeToReplace.end,
-								replacementString,
-							);
-						}
-						if (
-							isSpreadElement(node) &&
-							isCallExpressionWithIdentifier(node.argument, '$set')
-						) {
-							let nodeToReplace = node;
-							let callExpression = node.argument;
-							let [gettersNode] = callExpression.arguments;
-							let props = [];
-							if (gettersNode && gettersNode.type === 'ObjectExpression') {
-								gettersNode.properties.forEach((prop) => {
-									if (
-										prop.key.type === 'Identifier' &&
-										prop.value.type === 'Identifier' &&
-										prop.key.name === prop.value.name
-									) {
-										props.push(
-											`set ${prop.key.name}(value) { ${prop.key.name} = value; }`,
-										);
-									}
-								});
-							}
-							let replacementString = props.join(',\n');
-							magic.overwrite(
-								nodeToReplace.start,
-								nodeToReplace.end,
-								replacementString,
-							);
-						}
-
-						if (
-							isSpreadElement(node) &&
-							isCallExpressionWithIdentifier(node.argument, '$getset')
-						) {
-							let nodeToReplace = node;
-							let callExpression = node.argument;
-							let [gettersNode] = callExpression.arguments;
-							let props = [];
-							if (gettersNode && gettersNode.type === 'ObjectExpression') {
-								gettersNode.properties.forEach((prop) => {
-									if (
-										prop.key.type === 'Identifier' &&
-										prop.value.type === 'Identifier' &&
-										prop.key.name === prop.value.name
-									) {
-										props.push(
-											`get ${prop.key.name}() { return ${prop.key.name}; }`,
-										);
-										props.push(
-											`set ${prop.key.name}(value) { ${prop.key.name} = value; }`,
-										);
-									}
-								});
-							}
-							let replacementString = props.join(',\n');
-
-							magic.overwrite(
-								nodeToReplace.start,
-								nodeToReplace.end,
-								replacementString,
-							);
-						}
-					},
-				});
+				walkProgram(instance.content, magic, options)
 			}
 
 			if (process.env.DEBUG_DARK_RUNES) {

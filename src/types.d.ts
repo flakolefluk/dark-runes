@@ -1,6 +1,4 @@
-
 declare global {
-	function $state<T>(value: T): T;
 	function $states<T extends any[]>(...values: T): T
 
 	function $log(...args: any[]): void;
@@ -13,5 +11,9 @@ declare global {
 	function $set<T>(setObj: T): T;
 	function $getset<T>(getsetObj: T): T;
 }
+
+export declare function processDarkRunes(opts: any): void
+// TODO: fix type
+export declare function darkRunes(): any
 
 export { };

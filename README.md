@@ -45,7 +45,7 @@ npm i -D dark-runes
 ```
 
 ## Usage
-* add dark-runes preprocessor in `svelte.config.js`
+* to process components add dark-runes preprocessor in `svelte.config.js`
 ```js
 import adapter from '@sveltejs/adapter-auto';
 import { vitePreprocess } from '@sveltejs/kit/vite';
@@ -55,7 +55,7 @@ import { processDarkRunes } from 'dark-runes'
 const config = {
     preprocess: [
         vitePreprocess(),
-        processDarkRunes({}),
+        processDarkRunes(), // {runes:true}
     ],
     kit: {
         adapter: adapter()
@@ -65,9 +65,23 @@ const config = {
 export default config;
 ```
 
+* to process modules (`svelte.js`, `svelte.ts`) add dark-runes vite plugin in `vite.config.js`
+```js
+import { svelte } from '@sveltejs/vite-plugin-svelte'
+import { darkRunes } from 'dark-runes'
+import { defineConfig } from 'vite'
+
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [svelte(), darkRunes()],
+})
+
+```
+
 * add types to global namespace
 ```ts
-///<reference path="../node_modules/dark-runes/src/global.d.ts" />
+/// <reference types="dark-runes" />
 
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
@@ -86,20 +100,7 @@ export {};
 
 
 ## Runes
-Dark Runes serves as a testing ground for emerging rune technologies. While its ultimate aim is integration with Svelte 5, it currently functions seamlessly with Svelte version 4. It's important to note that the primary objective of Dark Runes is not to supplant Svelte runes but to enhance and complement them. The framework is open to community-driven contributions and innovations, and its continued existence is contingent on its ability to provide unique functionality. Dark Runes will be retired when equivalent features are incorporated into the core Svelte framework.
-
-### $state
-
-Source:
-```ts
-let foo = $state(0);
-```
-V4 Output:
-```ts
-let foo = 0;
-```
-
-** This rune will have no effect when V5 is available
+Dark Runes serves as a testing ground for emerging rune technologies. While its ultimate aim is integration with Svelte 5, it currently functions seamlessly with Svelte version 4 (`{runes:false}`). It's important to note that the primary objective of Dark Runes is not to supplant Svelte runes but to enhance and complement them. The framework is open to community-driven contributions and innovations, and its continued existence is contingent on its ability to provide unique functionality. Dark Runes will be retired when equivalent features are incorporated into the core Svelte framework.
 
 ### $states
 Source:
@@ -107,18 +108,18 @@ Source:
 let [foo,bar,baz] = $states(0, true, "wow");
 ```
 
-V4 Output:
-```ts
-let foo = 0;
-let bar = true;
-let baz = "wow";
-```
-
-Expected V5 Output:
+Output:
 ```ts
 let foo = $state(0);
 let bar = $state(true);
 let baz = $state("wow");
+```
+
+`{runes:false}` Output:
+```ts
+let foo = 0;
+let bar = true;
+let baz = "wow";
 ```
 
 ### $log
@@ -127,18 +128,18 @@ Source:
 $log(foo)
 ```
 
-V4 Output:
-```ts
-$: {
-    console.log(foo)
-}
-```
-
-Expected V5 Output:
+Output:
 ```ts
 $effect(() => {
     console.log(foo)
 });
+```
+
+`{runes:false}` Output:
+```ts
+$: {
+    console.log(foo)
+}
 ```
 
 ### $get
@@ -197,9 +198,9 @@ let myObj = {
 Source:
 ```ts
 let myObj = $gsp(
-    { foo, bar },
-    { foo, fizz },
-    { fuzz: true }
+    { foo, bar }, // getters
+    { foo, fizz }, // setters
+    { fuzz: true } // props
 )
 ```
 
@@ -212,14 +213,6 @@ let myObj = {
     set fizz(val) { fizz = val}
     fuzz: true
 }
-```
-
-### $memo (Coming soon).
-Source:
-```ts
-$memo(() => {
-    // expensive calculation
-})
 ```
 
 ## License
