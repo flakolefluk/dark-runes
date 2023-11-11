@@ -100,19 +100,12 @@ export {};
 
 
 ## Runes
-Dark Runes serves as a testing ground for emerging rune technologies. While its ultimate aim is integration with Svelte 5, it currently functions seamlessly with Svelte version 4. It's important to note that the primary objective of Dark Runes is not to supplant Svelte runes but to enhance and complement them. The framework is open to community-driven contributions and innovations, and its continued existence is contingent on its ability to provide unique functionality. Dark Runes will be retired when equivalent features are incorporated into the core Svelte framework.
+Dark Runes serves as a testing ground for emerging rune technologies. While its ultimate aim is integration with Svelte 5, it currently functions seamlessly with Svelte version 4 (`{runes:false}`). It's important to note that the primary objective of Dark Runes is not to supplant Svelte runes but to enhance and complement them. The framework is open to community-driven contributions and innovations, and its continued existence is contingent on its ability to provide unique functionality. Dark Runes will be retired when equivalent features are incorporated into the core Svelte framework.
 
 ### $states
 Source:
 ```ts
 let [foo,bar,baz] = $states(0, true, "wow");
-```
-
-`{runes:false}` Output:
-```ts
-let foo = 0;
-let bar = true;
-let baz = "wow";
 ```
 
 Output:
@@ -122,10 +115,24 @@ let bar = $state(true);
 let baz = $state("wow");
 ```
 
+`{runes:false}` Output:
+```ts
+let foo = 0;
+let bar = true;
+let baz = "wow";
+```
+
 ### $log
 Source:
 ```ts
 $log(foo)
+```
+
+Output:
+```ts
+$effect(() => {
+    console.log(foo)
+});
 ```
 
 `{runes:false}` Output:
@@ -133,13 +140,6 @@ $log(foo)
 $: {
     console.log(foo)
 }
-```
-
-Expected V5 Output:
-```ts
-$effect(() => {
-    console.log(foo)
-});
 ```
 
 ### $get
@@ -198,9 +198,9 @@ let myObj = {
 Source:
 ```ts
 let myObj = $gsp(
-    { foo, bar },
-    { foo, fizz },
-    { fuzz: true }
+    { foo, bar }, // getters
+    { foo, fizz }, // setters
+    { fuzz: true } // props
 )
 ```
 
