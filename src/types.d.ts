@@ -1,4 +1,4 @@
-
+import { Plugin } from 'vite'
 declare global {
 	function $state<T>(value: T): T;
 	function $states<T extends any[]>(...values: T): T
@@ -13,5 +13,8 @@ declare global {
 	function $set<T>(setObj: T): T;
 	function $getset<T>(getsetObj: T): T;
 }
+
+export declare function processDarkRunes(opts: any): void
+export declare function darkRunes(): Plugin
 
 export { };

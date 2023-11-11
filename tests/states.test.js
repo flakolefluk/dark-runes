@@ -7,17 +7,25 @@ describe('$states rune', () => {
 		test('number', async () => {
 			let input = `
                 <script>
-                    let [foo] = $states(1)
+                    let [foo] = $states(1);
                 </script>
 `;
 
-			let output = `
+			let v4Output = `
                 <script>
                     let foo = 1;
                 </script>
 `;
+			let output = `
+                <script>
+                    let foo = $state(1);
+                </script>
+`
+			await compareOutput(input, v4Output, false);
+			await compareOutput(input, output, true);
 			await compareOutput(input, output);
 		});
+
 		test('string', async () => {
 			let input = `
                 <script>
@@ -25,25 +33,42 @@ describe('$states rune', () => {
                 </script>
 `;
 
-			let output = `
+			let v4Output = `
                 <script>
                     let foo = "foo";
-                </script>
-`;
-			await compareOutput(input, output);
-		});
-		test('boolean', async () => {
-			let input = `
-                <script>
-                    let [foo] = $states(true);
                 </script>
 `;
 
 			let output = `
                 <script>
+                    let foo = $state("foo");
+                </script>
+`;
+			await compareOutput(input, v4Output, false);
+			await compareOutput(input, output, true);
+			await compareOutput(input, output);
+		});
+
+		test('boolean', async () => {
+			let input = `
+                <script>
+                    let [foo] = $states(true)
+                </script>
+`;
+
+			let v4Output = `
+                <script>
                     let foo = true;
                 </script>
 `;
+			let output = `
+                <script>
+                    let foo = $state(true);
+                </script>
+`;
+
+			await compareOutput(input, v4Output, false);
+			await compareOutput(input, output, true);
 			await compareOutput(input, output);
 		});
 
@@ -54,10 +79,16 @@ describe('$states rune', () => {
                 </script>
 `;
 
-			let output = `<script>
+			let v4Output = `<script>
                     let foo = {foo:1,bar:true};
                 </script>
 `;
+			let output = `<script>
+                    let foo = $state({foo:1,bar:true});
+                </script>
+`;
+			await compareOutput(input, v4Output, false);
+			await compareOutput(input, output, true);
 			await compareOutput(input, output);
 		});
 
@@ -68,11 +99,18 @@ describe('$states rune', () => {
                 </script>
 `;
 
-			let output = `
+			let v4Output = `
                 <script>
                     let foo = [1,true];
                 </script>
 `;
+			let output = `
+                <script>
+                    let foo = $state([1,true]);
+                </script>
+`;
+			await compareOutput(input, v4Output, false);
+			await compareOutput(input, output, true);
 			await compareOutput(input, output);
 		});
 	});
@@ -85,7 +123,7 @@ describe('$states rune', () => {
                 </script>
 `;
 
-			let output = `
+			let v4Output = `
                 <script>
                     let foo = 1;
 let bar = "foo";
@@ -94,6 +132,17 @@ let fizz = {baz:"baz"};
 let fuzz = ["a", 1];
                 </script>
         `;
+			let output = `
+                <script>
+                    let foo = $state(1);
+let bar = $state("foo");
+let baz = $state(true);
+let fizz = $state({baz:"baz"});
+let fuzz = $state(["a", 1]);
+                </script>
+        `;
+			await compareOutput(input, v4Output, false);
+			await compareOutput(input, output, true);
 			await compareOutput(input, output);
 		});
 
