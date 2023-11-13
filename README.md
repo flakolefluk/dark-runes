@@ -153,7 +153,7 @@ let myObj = {
 Output:
 ```ts
 let myObj = {
-    get foo() { return foo;}
+    get foo() { return foo;},
     get bar() { return bar;}
 }
 ```
@@ -169,7 +169,7 @@ let myObj = {
 Output:
 ```ts
 let myObj = {
-    set foo(val) { foo = val }
+    set foo(val) { foo = val },
     set bar(val) { bar = val}
 }
 ```
@@ -185,9 +185,9 @@ let myObj = {
 Output:
 ```ts
 let myObj = {
-    get foo() { return foo;}
-    set foo(val) { foo = val }
-    get bar() { return bar;}
+    get foo() { return foo;},
+    set foo(val) { foo = val },
+    get bar() { return bar;},
     set bar(val) { bar = val}
 }
 ```
@@ -207,13 +207,37 @@ let myObj = $gsp(
 Output:
 ```ts
 let myObj = {
-    get foo() { return foo;}
-    get bar() { return bar;}
-    set foo(val) { foo = val }
-    set fizz(val) { fizz = val}
+    get foo() { return foo;},
+    get bar() { return bar;},
+    set foo(val) { foo = val },
+    set fizz(val) { fizz = val},
     fuzz: true
 }
 ```
+
+### $wrap (writables, readables and properties)
+Source:
+```ts
+let myObj = $wrap(
+    { foo, bar }, // writables
+    { fizz, jazz }, // readables
+    { fuzz: true } // props
+)
+```
+
+Output:
+```ts
+let myObj = {
+    get foo() { return foo; },
+    set foo(val) { foo = val },
+    get bar() { return bar; },
+    set bar(val) { bar = val },
+    get fizz() { return fizz; },
+    get jazz() { return jazz; },
+    fuzz: true
+}
+```
+
 
 ## License
 [MIT](./LICENSE) License © 2023-Present [Ignacio Falk](https://github.com/flakolefluk)

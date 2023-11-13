@@ -11,6 +11,7 @@ import {
 	isSpreadElement,
 	isVariableDeclaration
 } from './utils.js';
+import { wrapHandler } from './handlers/wrapHandler.js';
 
 /**
  * 
@@ -31,6 +32,10 @@ function walkProgram(program, magic, options) {
 
 			if (isCallExpressionWithIdentifier(node, '$gsp')) {
 				gspHandler(node, magic, options)
+			}
+
+			if (isCallExpressionWithIdentifier(node, '$wrap')) {
+				wrapHandler(node, magic, options)
 			}
 
 			if (isSpreadElement(node)) {
