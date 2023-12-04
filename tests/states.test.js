@@ -21,8 +21,8 @@ describe('$states rune', () => {
                     let foo = $state(1);
                 </script>
 `
-			await compareOutput(input, v4Output, false);
-			await compareOutput(input, output, true);
+			await compareOutput(input, v4Output, { runes: false });
+			await compareOutput(input, output, { runes: true });
 			await compareOutput(input, output);
 		});
 
@@ -44,8 +44,8 @@ describe('$states rune', () => {
                     let foo = $state("foo");
                 </script>
 `;
-			await compareOutput(input, v4Output, false);
-			await compareOutput(input, output, true);
+			await compareOutput(input, v4Output, { runes: false });
+			await compareOutput(input, output, { runes: true });
 			await compareOutput(input, output);
 		});
 
@@ -67,8 +67,8 @@ describe('$states rune', () => {
                 </script>
 `;
 
-			await compareOutput(input, v4Output, false);
-			await compareOutput(input, output, true);
+			await compareOutput(input, v4Output, { runes: false });
+			await compareOutput(input, output, { runes: true });
 			await compareOutput(input, output);
 		});
 
@@ -87,8 +87,8 @@ describe('$states rune', () => {
                     let foo = $state({foo:1,bar:true});
                 </script>
 `;
-			await compareOutput(input, v4Output, false);
-			await compareOutput(input, output, true);
+			await compareOutput(input, v4Output, { runes: false });
+			await compareOutput(input, output, { runes: true });
 			await compareOutput(input, output);
 		});
 
@@ -109,8 +109,8 @@ describe('$states rune', () => {
                     let foo = $state([1,true]);
                 </script>
 `;
-			await compareOutput(input, v4Output, false);
-			await compareOutput(input, output, true);
+			await compareOutput(input, v4Output, { runes: false });
+			await compareOutput(input, output, { runes: true });
 			await compareOutput(input, output);
 		});
 	});
@@ -141,8 +141,8 @@ let fizz = $state({baz:"baz"});
 let fuzz = $state(["a", 1]);
                 </script>
         `;
-			await compareOutput(input, v4Output, false);
-			await compareOutput(input, output, true);
+			await compareOutput(input, v4Output, { runes: false });
+			await compareOutput(input, output, { runes: true });
 			await compareOutput(input, output);
 		});
 

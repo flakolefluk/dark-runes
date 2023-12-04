@@ -2,16 +2,18 @@ import * as acorn from 'acorn';
 import { walk } from 'estree-walker';
 import MagicString from 'magic-string';
 import { parse } from 'svelte/compiler';
+import { devfxHandler } from './handlers/devfxHandler.js';
+import { fxHandler } from './handlers/fxHandler.js';
 import { gspHandler } from './handlers/gspHandler.js';
 import { logHandler } from './handlers/logHandler.js';
 import { spreadElementHandler } from './handlers/spreadElement.js';
 import { variableDeclarationHandler } from './handlers/variableDeclaration.js';
+import { wrapHandler } from './handlers/wrapHandler.js';
 import {
 	isCallExpressionWithIdentifier,
 	isSpreadElement,
 	isVariableDeclaration
 } from './utils.js';
-import { wrapHandler } from './handlers/wrapHandler.js';
 
 /**
  * 
@@ -26,6 +28,10 @@ function walkProgram(program, magic, options) {
 				variableDeclarationHandler(node, magic, options)
 			}
 
+			if (isSpreadElement(node)) {
+				spreadElementHandler(node, magic, options)
+			}
+
 			if (isCallExpressionWithIdentifier(node, '$log')) {
 				logHandler(node, magic, options)
 			}
@@ -38,16 +44,24 @@ function walkProgram(program, magic, options) {
 				wrapHandler(node, magic, options)
 			}
 
-			if (isSpreadElement(node)) {
-				spreadElementHandler(node, magic, options)
+			if (isCallExpressionWithIdentifier(node, '$fx')) {
+				fxHandler(node, magic, options)
+			}
+
+			if (isCallExpressionWithIdentifier(node, '$devfx')) {
+				devfxHandler(node, magic, options)
 			}
 		},
 	});
 }
 
-export function darkRunes() {
+export function darkRunes(options = {}) {
+	let config
 	return {
 		name: "vite-plugin-dark-runes",
+		configResolved(resolvedConfig) {
+			config = resolvedConfig
+		},
 		transform(src, id) {
 			if (id.endsWith('.svelte.ts') || id.endsWith('.svelte.js')) {
 				let magic = new MagicString(src, { filename: id })
@@ -60,7 +74,7 @@ export function darkRunes() {
 					ecmaVersion: 13,
 					locations: true
 				});
-				walkProgram(ast, magic, { runes: true })
+				walkProgram(ast, magic, { dev: config.env.DEV, ...options, runes: true })
 				return { code: magic.toString(), map: magic.generateMap() };
 			}
 		}
@@ -91,7 +105,8 @@ export function processDarkRunes(options = {}) {
 			const ast = parse(content, { filename, modern: false });
 			let instance = ast.instance;
 			if (instance) {
-				walkProgram(instance.content, magic, options)
+				// TODO: is there a better way to check for dev mode?
+				walkProgram(instance.content, magic, { dev: process.env.NODE_ENV !== "production", ...options, })
 			}
 
 			if (process.env.DEBUG_DARK_RUNES) {

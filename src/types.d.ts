@@ -14,10 +14,35 @@ declare global {
 	function $get<T>(getObj: T): Readonly<T>;
 	function $set<T>(setObj: T): T;
 	function $getset<T>(getsetObj: T): T;
+
+	/**
+ 	* 
+	* $fx rune
+	* compiles to:
+	* $effect(() => { (fn)(...args) })
+	* 
+	*
+ 	* @param fn The function to call inside an $effect
+ 	* @param args The arguments of the function
+ 	*/
+	function $fx(fn, ...args:any[]): void
+
+	/**
+ 	* 
+	* $devfx rune
+	* compiles (ONLY IN DEV mode) to:
+	* $effect(() => { (fn)(...args) });
+	* 
+	* NOTE: $devfx will be removed in production
+	*
+ 	* @param fn The function to call inside an $effect
+ 	* @param args The arguments of the function
+ 	*/
+	function $devfx(fn, ...args:any[]): void
 }
 
-export declare function processDarkRunes(opts?: any): void
+export declare function processDarkRunes(opts?: Record<string, any>): void
 // TODO: fix type
-export declare function darkRunes(): any
+export declare function darkRunes(opts?: Record<string, any>): any
 
 export { };

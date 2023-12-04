@@ -25,8 +25,8 @@ console.log(a)
 });
     </script>
 `;
-        await compareOutput(input, v4Output, false);
-        await compareOutput(input, output, true);
+        await compareOutput(input, v4Output, { runes: false });
+        await compareOutput(input, output, { runes: true });
         await compareOutput(input, output);
     });
 
@@ -62,8 +62,8 @@ console.log(a)
 });
     </script>
 `;
-        await compareOutput(input, v4Output, false);
-        await compareOutput(input, output, true);
+        await compareOutput(input, v4Output, { runes: false });
+        await compareOutput(input, output, { runes: true });
         await compareOutput(input, output,);
     });
 
@@ -100,8 +100,8 @@ console.log(a,b,c,...d)
     </script>
 `;
 
-        await compareOutput(input, v4Output, false);
-        await compareOutput(input, output, true);
+        await compareOutput(input, v4Output, { runes: false });
+        await compareOutput(input, output, { runes: true });
         await compareOutput(input, output);
     });
 
@@ -136,8 +136,8 @@ console.log(a,b,c,...d)
 });
     </script>
 `;
-        await compareOutput(input, v4Output, false);
-        await compareOutput(input, output, true);
+        await compareOutput(input, v4Output, { runes: false });
+        await compareOutput(input, output, { runes: true });
         await compareOutput(input, output);
     });
 });
