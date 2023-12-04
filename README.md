@@ -142,6 +142,83 @@ $: {
 }
 ```
 
+### $fx
+Source:
+```ts
+$fx(someFn, foo, bar)
+```
+
+Output:
+```ts
+$effect(() => {
+    someFn(foo, bar)
+});
+```
+
+`{runes:false}` Output:
+```ts
+$: {
+    someFn(foo, bar)
+}
+```
+
+Inline functions can be used as well
+
+Source:
+```ts
+$fx((val) => {
+    if(val > 5) {
+        confetti(val)
+    }
+    }, foo)
+```
+
+Output:
+```ts
+$effect(() => {
+    ((val)=> {
+    if(val > 5) {
+        confetti(val)
+    }
+    })(foo)
+});
+```
+
+`{runes:false}` Output:
+```ts
+$: {
+    ((val) => {
+    if(val > 5) {
+        confetti(val)
+    }
+    })(foo)
+}
+```
+
+### $devfx
+Same as $fx, but code is **removed in production.**
+Source:
+```ts
+$devfx(console.log, foo, bar)
+
+```
+
+Output:
+```ts
+$effect(() => {
+    console.log(foo, bar)
+})
+```
+
+`{runes:false}` Output:
+```ts
+$: {
+    console.log(foo, bar)
+}
+```
+
+
+
 ### $get
 Source:
 ```ts

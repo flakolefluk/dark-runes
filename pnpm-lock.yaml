@@ -29,8 +29,8 @@ devDependencies:
     specifier: ^3.0.3
     version: 3.0.3
   svelte:
-    specifier: 5.0.0-next.17
-    version: 5.0.0-next.17
+    specifier: 5.0.0-next.18
+    version: 5.0.0-next.18
   vite:
     specifier: ^4.4.5
     version: 4.4.9(@types/node@20.7.0)
@@ -2257,8 +2257,8 @@ packages:
     engines: {node: '>= 0.4'}
     dev: true
 
-  /svelte@5.0.0-next.17:
-    resolution: {integrity: sha512-+TiGAi3kqwIIXtB3h1sLs3cD/KMdk3L/zEArfw0ZeqqO/hLrRGRvnTxspgktxYLHG9trBn6Xx9zD2Eekze7CCA==}
+  /svelte@5.0.0-next.18:
+    resolution: {integrity: sha512-yugRTfz6zNh3RilU6EJCxXklRuJd++rv/Hv2yS0K1DEJs1ES25Qt91Dkbj1t8ZhlkAR5JuhXWvnArMYlGCR6Tg==}
     engines: {node: '>=18'}
     dependencies:
       '@ampproject/remapping': 2.2.1
