@@ -39,6 +39,25 @@ declare global {
  	* @param args The arguments of the function
  	*/
 	function $devfx(fn, ...args:any[]): void
+
+	/**
+ 	* 
+	* $computed
+	* Alternative to $derived
+	* that allows using an arrow function expression
+	* as argument.
+	* The output will be converted to an IIFE argument for $derived
+	*
+	* @example
+	* `let foo = $computed(() => { return bar; })`
+	* compiles to:	
+	* `let foo = $derived((() => { return bar; })())`
+	*
+ 	* @param expression The expression to be derived
+	* @returns derived value
+ 	*/
+	function $computed<T>(exp: T | (() => T)): T
+
 }
 
 export declare function processDarkRunes(opts?: Record<string, any>): void
