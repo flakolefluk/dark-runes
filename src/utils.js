@@ -34,6 +34,27 @@ export function isIdentifier(node) {
 }
 
 /**
+ * @type {import('./nodes').IsArrowFunctionExpression}
+ */
+export function isArrowFunctionExpression(node) {
+	return isNode(node) && node.type === 'ArrowFunctionExpression';
+}
+
+/**
+ * @type {import('./nodes').IsFunctionExpression}
+ */
+export function isFunctionExpression(node) {
+	return isNode(node) && node.type === 'FunctionExpression';
+}
+
+/**
+ * @type {import('./nodes').IsAnyFunctionExpression}
+ */
+export function isAnyFunctionExpression(node) {
+	return isArrowFunctionExpression(node) || isFunctionExpression(node)
+}
+
+/**
  * 
  * @param {import('estree').Identifier} node 
  * @param {string} name 

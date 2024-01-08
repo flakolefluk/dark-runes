@@ -2,6 +2,7 @@ import * as acorn from 'acorn';
 import { walk } from 'estree-walker';
 import MagicString from 'magic-string';
 import { parse } from 'svelte/compiler';
+import { computedHandler } from './handlers/computedHandler.js';
 import { devfxHandler } from './handlers/devfxHandler.js';
 import { fxHandler } from './handlers/fxHandler.js';
 import { gspHandler } from './handlers/gspHandler.js';
@@ -50,6 +51,10 @@ function walkProgram(program, magic, options) {
 
 			if (isCallExpressionWithIdentifier(node, '$devfx')) {
 				devfxHandler(node, magic, options)
+			}
+
+			if (isCallExpressionWithIdentifier(node, '$computed')) {
+				computedHandler(node, magic, options)
 			}
 		},
 	});
