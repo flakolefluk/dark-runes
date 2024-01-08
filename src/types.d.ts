@@ -55,7 +55,7 @@ declare global {
  	* @param expression The expression to be derived
 	* @returns derived value
  	*/
-	function $computed<T>(exp: T | (() => T)): T
+	function $computed<T>(exp: () => T): T
 
 }
 
