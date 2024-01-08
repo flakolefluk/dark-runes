@@ -315,6 +315,17 @@ let myObj = {
 }
 ```
 
+### $computed
+Source:
+```ts
+let bar = $computed(() => foo * 2)
+```
+
+Output:
+```ts
+let bar = $derived((() => foo * 2)()) // equivalent to $derived(foo * 2)
+```
+
 
 ## License
 [MIT](./LICENSE) License © 2023-Present [Ignacio Falk](https://github.com/flakolefluk)

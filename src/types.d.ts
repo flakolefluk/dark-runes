@@ -43,9 +43,8 @@ declare global {
 	/**
  	* 
 	* $computed
-	* Alternative to $derived
-	* that allows using an arrow function expression
-	* as argument.
+	* Alternative to $derived that allows
+	* using a function expression as argument.
 	* The output will be converted to an IIFE argument for $derived
 	*
 	* @example
